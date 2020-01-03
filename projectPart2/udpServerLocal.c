@@ -1,7 +1,7 @@
 //UDP echo server
 #include "headerFiles.h"
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
+	printf("Nobutaka Kim, T00057442\n");
 	//declare an define variables
 	int sockfd; //socket descriptor
 	int len; //length of string to be echoed
@@ -36,9 +36,9 @@ int main(int argc, char *argv[])
         //buffer = malloc(sizeof(char)*1024); 
         //receive string
 		len = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&clntAddr,&clntAddrLen);
-		printf("received: %d\n", *buffer);
-        buffer[len] = '\0';
-		puts(buffer);
+		buffer[len] = '\0';
+		printf("received: %d\n%s\n", len, buffer);
+        puts(buffer);
 		printf("\n");
         if (strcmp(buffer, end_signal)==0){
 			break;

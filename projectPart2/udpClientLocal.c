@@ -1,10 +1,11 @@
 // udp client driver program 
+//borrowed heavily from geeksforgeeks, textbook code and CMU tutorial
 #include "headerFiles.h"
 
 // Driver code 
-int main(int argc, char *argv[]) 
-{   
-    //64KB is the max size of UDP packet, https://stackoverflow.com/questions/2862071/how-large-should-my-recv-buffer-be-when-calling-recv-in-the-socket-library
+int main(int argc, char *argv[]){   
+    printf("Nobutaka Kim, T00057442\n");
+	//64KB is the max size of UDP packet, https://stackoverflow.com/questions/2862071/how-large-should-my-recv-buffer-be-when-calling-recv-in-the-socket-library
 	char buffer[1024]; 
 	char * end_signal = "00000";
 	//socket file descriptor, n= num bytes rec'd from server
