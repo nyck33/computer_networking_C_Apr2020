@@ -32,7 +32,9 @@ when sending the destination file name, set more bit to '9'.
 
 extern int swap_wait(unsigned short port);
 extern int swap_read(int sd, char *buf);
+extern int swap_write(int sd, char *buf, int length);
 extern void swap_close(int sd);
+extern int swap_open(unsigned int addr, unsigned short port);
 
 #define MAX_FTA	128
 
@@ -55,12 +57,12 @@ int main (int argc, char *argv[])
     char *buff;
 
     char source [32];
-    strcpy(source, argv[1]);
-    printf("Source file is: %s\n", source);
+    strcpy(source, argv[3]);
+    printf("fc, Source file is: %s\n", source);
 
     char dest [32];
-    strcpy(dest, argv[2]);
-    printf("Destination file is: %s\n", dest);
+    strcpy(dest, argv[4]);
+    printf("fc, Destination file is: %s\n", dest);
 
     //https://stackoverflow.com/questions/3747086/reading-the-whole-text-file-into-a-char-array-in-c/22515917
     if((fp = fopen(source, "rb")) == NULL){
@@ -74,9 +76,22 @@ int main (int argc, char *argv[])
     source_size = ftell(fp);
     //divide into chunks of 125 and remainder
     int num_fragments = source_size / 125;
+    printf("fc,num_fragments %d\n", num_fragments);
 
     int last_block = source_size % 125; 
+    printf("fc, last_block %d\n", last_block);
 
+    //convert num_fragments and last_block to strings
+    /*
+    int length = snprintf(NULL, 0, "%d", num_fragments);
+    char* numfrag = malloc(length+1);
+    snprintf(numfrag, length+1, %d, num_fragments);
+    
+    int length2 = snprintf(NULL, 0, "%d", last_block);
+    char* lablock = malloc(length2+1);
+    snprintf(lablock, length2+1, %d, last_block);
+    */
+    
     rewind(fp);
 
     //allocate memory for entire content
@@ -119,18 +134,34 @@ int main (int argc, char *argv[])
             {
                 //more bit > 1 to signal that it's source size and dest file name
                 curr_buff[0] = '9';
-                curr_buff[1] = (char)source_size;
-                //len
-                curr_buff[2] = (char)last_block;
-                //len of dest name
-                curr_buff[3] = strlen(dest)
-                
-                //strlen plus num fragments + last block + len dest
-                for(int i = 4; i<strlen(dest)+4; i++)
+                //////////////////////////////////////////////////////////////////////////////
+                /*
+                int dcount = 1;
+                //copy num fragments in 
+                for(int k=0; k<strlen(numfrag); k++)
                 {
-                    curr_buff[i] = dest[i];
+                    curr_buff[dcount] = numfrag[k];
+                    dcount++;
                 }
-                numB_written = swap_write(sd, curr_buff, strlen(dest)+4);
+                */
+                ///////////////////////////////////////////////////////////////////////////////
+                curr_buff[1] = '9';//(char)num_fragments;
+                printf("fc, num_fragments: %d\n", num_fragments);
+                //len
+                curr_buff[2] = '9';//(char)last_block;
+                printf("fc, lastblock: %d\n", last_block);
+                //len of dest name
+                curr_buff[3] = '9';//(char)strlen(dest);
+                printf("fc, strlen dest %d\n", strlen(dest));
+                
+                //strlen plus signal + num fragments + last block + len destname
+                int i=0;
+                for(i = 4; i<strlen(dest)+4; i++)
+                {
+                    curr_buff[i] = dest[i-4];
+                }
+                curr_buff[i+1] = '\0';
+                numB_written = swap_write(sd, curr_buff, strlen(dest)+5);
                 count++;
                 curr_buff[0]='\0';
                 printf("sent dest filename: %s\n", dest);
@@ -142,13 +173,16 @@ int main (int argc, char *argv[])
                 //more bit
                 curr_buff[0] = '1';
                 //len
-                curr_buff[1] = 125;
+                curr_buff[1] = (char)125;
                 
-                for(int i = 2; i< 125; i++)
+                int i =0;
+                for(i = 2; i< 125; i++)
                 {
                     curr_buff[i] = buff[pos];
                     pos++;
                 }
+                //TODO:  need to adjust curr_buff size to 124??????????????????????????????????
+                curr_buff[i+1] = '\0';
                 //swap write
                 numB_written = swap_write(sd, curr_buff, 125);
                 count++;
@@ -161,11 +195,13 @@ int main (int argc, char *argv[])
 
                 curr_buff[1] = last_block;
                 
-                for(int i = 2; i < last_block +2; i++)
+                int i =0;
+                for(i = 2; i < last_block +2; i++)
                 {
                     curr_buff[i] = buff[pos];
                     pos++;
                 }
+                curr_buff[i+1] = '\0';
                 //swap write
                 numB_written = swap_write(sd, curr_buff, last_block+2);
                 count++;

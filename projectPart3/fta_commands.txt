@@ -1,0 +1,12 @@
+compile
+
+gcc fta_server.c swap_server.c sdp.c -o fta_server
+
+gcc fta_client.c swap_client.c sdp.c -o fta_client
+
+run:
+
+./fta_client 127.0.0.1 9988 dad.txt copy.txt
+
+./fta_server 9988
+

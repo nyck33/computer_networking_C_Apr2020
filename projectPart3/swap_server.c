@@ -74,8 +74,12 @@ int swap_read(int sd, char *buf)
 		
 		//receive a frame without a timer  
 		numB_recv = sdp_receive(sd, frame);
-		printf("\nss, numBrecv: %d\n", numB_recv);  //13
-		
+		printf("\nss, numBrecv: %d\n check frame\n", numB_recv);  //13
+		//test
+		for(int m =0; m< numB_recv; m++)
+		{
+			printf("ss, frame[%d]: %c\n", m, frame[m]);
+		}
 		//unpack the frame:  order is checksum, seq num, message
 		unsigned char csum = (unsigned char)frame[0];
 		int seqnum = (int)(frame[1]);

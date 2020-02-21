@@ -71,7 +71,7 @@ int swap_write(int sd, char *buf, int length)
 	while(success==0)
 	{
 		//int n;
-		char frame[MAXFRAME]; //256 -3 for message
+		char frame[MAXLINE]; //128 -3 for message
 
 		if (session_id == 0 || sd != session_id)
 			return -1;
@@ -86,7 +86,7 @@ int swap_write(int sd, char *buf, int length)
 		printf("sc, cast frame[0] csum to unsigned int %u\n", (unsigned int)(unsigned char)frame[0]); //240
 		//copy seq number
 		frame[1] = (char)S;  
-		printf("sc, seqnum frame[1]: %c\n", frame[1]); //null
+		printf("sc, seqnum frame[1]: %d\n", (int)frame[1]); //null
 		//copy message length
 		frame[2] = (char)length;
 		//check
@@ -187,7 +187,7 @@ int swap_write(int sd, char *buf, int length)
 				unsigned char ACK [1] = {ACK_actual};
 				
 				unsigned char check = check_checksum(ACK, 1, ACK_csum);
-				printf("check_csum of ACK: ", (unsigned int)check);
+				printf("check_csum of ACK: %u ", (unsigned int)check);
 
 				//the checksum matches the checksum from ACK num
 				//unsigned char check = checksum(ACK, 1);

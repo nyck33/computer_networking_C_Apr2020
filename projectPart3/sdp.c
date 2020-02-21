@@ -160,9 +160,9 @@ int sdp_receive(int sd, char *buf)
 //	It is done in sdp_send().
 //		if (random() % 100 < 20 && n > 0)
 //			continue;  // let's drop it
-		if (random() % 100 < 50 && n > 10) {
-			buf[n-1] = 0xff;
-		}
+		//if (random() % 100 < 50 && n > 10) {
+	//		buf[n-1] = 0xff;
+	//	}
 
 		break;
 	}
@@ -224,13 +224,13 @@ int sdp_receive_with_timer(int sd, char *buf, unsigned int expiration)
 		/*
 		*	include some errors
 		*/
-
+		/*
 		if (random() % 100 < 20 && n > 0)
 			return -3;  // timeout error
 		if (random() % 100 < 20 && n > 10) {
 			buf[n-1] = 0xff;
 		}
-
+		*/
 		break;
 	}
 
@@ -252,10 +252,10 @@ int sdp_send(int sd, char *buf, int length)
 		return -1;
 
 	// 10% of packets are dropped
-
+	/*
 	if (random() % 100 < 10)
 		return length;  // let's drop it
-
+	*/
 	// the last 80% of packets
 
 	bzero(&cliaddr, sizeof(cliaddr));
